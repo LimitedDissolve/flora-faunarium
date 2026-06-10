@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://ctgyshomnqhwr"]
+
+[ext_resource type="Script" uid="uid://bp1devvyw5pio" path="res://Entities/Items/bee_jar.gd" id="1_xrk58"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xrk58"]
+albedo_color = Color(0.7660065, 0.765608, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_131vx"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.4
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_xrk58"]
+height = 0.4
+radius = 0.2
+
+[node name="BeeJar" type="RigidBody3D" unique_id=398173852 groups=["interactable", "small_item"]]
+script = ExtResource("1_xrk58")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=452163180]
+material_override = SubResource("StandardMaterial3D_xrk58")
+mesh = SubResource("CylinderMesh_131vx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1919497237]
+shape = SubResource("CylinderShape3D_xrk58")

@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://y2xoqibikvk4"]
+
+[ext_resource type="PackedScene" uid="uid://cdhkttoie4q7q" path="res://Entities/Player/player.tscn" id="1_ormqy"]
+[ext_resource type="PackedScene" uid="uid://oaq11pjuhjmy" path="res://Entities/Hive/hive.tscn" id="2_3158n"]
+[ext_resource type="PackedScene" uid="uid://ctu533bb2phgk" path="res://Environment/Pedestal/pedestal.tscn" id="4_ub4j8"]
+[ext_resource type="PackedScene" uid="uid://c0q8lr5llluly" path="res://Entities/Tree/tree.tscn" id="5_pvdih"]
+[ext_resource type="PackedScene" uid="uid://cyfrdgmgfqclt" path="res://Entities/Machines/analyzer.tscn" id="5_ub4j8"]
+[ext_resource type="PackedScene" uid="uid://cl3xl2xr2c61e" path="res://Entities/Machines/centrifuge.tscn" id="6_pvdih"]
+
+[node name="TestLevel" type="Node3D" unique_id=1434833411]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1024348523]
+use_collision = true
+size = Vector3(20, 1, 20)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=952288946]
+transform = Transform3D(1, 0, 0, 0, 0.76040596, 0.64944804, 0, -0.64944804, 0.76040596, 0, 1.8006604, 0)
+
+[node name="Player" parent="." unique_id=998782458 instance=ExtResource("1_ormqy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3029428, 5.583653, 6.0854883)
+
+[node name="Hive" parent="." unique_id=838853479 instance=ExtResource("2_3158n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1, 3.5)
+
+[node name="Pedestal" parent="." unique_id=724398501 instance=ExtResource("4_ub4j8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1752782, 0.6246495, 2.644659)
+
+[node name="Tree" parent="." unique_id=1894220056 instance=ExtResource("5_pvdih")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5087647, 1.5, 0.935168)
+
+[node name="Analyzer" parent="." unique_id=1584497313 instance=ExtResource("5_ub4j8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6647239, 0.5034249, 2.8686848)
+
+[node name="Centrifuge" parent="." unique_id=1471484553 instance=ExtResource("6_pvdih")]
+transform = Transform3D(0.9231029, 0.38455305, 0, -0.38455305, 0.9231029, 0, 0, 0, 1, -1.2252289, 2.726799, 4.580578)

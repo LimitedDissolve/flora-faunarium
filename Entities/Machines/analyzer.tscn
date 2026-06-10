@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cyfrdgmgfqclt"]
+
+[ext_resource type="Script" uid="uid://dmfs6ls6cou40" path="res://Entities/Machines/analyzer.gd" id="1_feak1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_feak1"]
+size = Vector3(0.6, 0.5, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lfut8"]
+albedo_color = Color(0.46645278, 0.36371794, 0.18403924, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lhsx6"]
+size = Vector3(0.6, 0.5, 0.6)
+
+[node name="Analyzer" type="RigidBody3D" unique_id=1584497313]
+script = ExtResource("1_feak1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2144006426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_feak1")
+surface_material_override/0 = SubResource("StandardMaterial3D_lfut8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=490348596]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_lhsx6")

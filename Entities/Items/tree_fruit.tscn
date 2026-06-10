@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bqyxr5p4od1wa"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0cbty"]
+transparency = 1
+albedo_color = Color(0.8, 0.30980393, 0.12156863, 0.5764706)
+
+[sub_resource type="SphereMesh" id="SphereMesh_hhim5"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_o3ink"]
+radius = 0.15
+
+[node name="TreeFruit" type="RigidBody3D" unique_id=224003225]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1521402880]
+material_override = SubResource("StandardMaterial3D_0cbty")
+mesh = SubResource("SphereMesh_hhim5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2090994534 groups=["fruit"]]
+shape = SubResource("SphereShape3D_o3ink")

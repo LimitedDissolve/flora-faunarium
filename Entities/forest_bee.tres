@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="BeeGenome" format=3 uid="uid://dfvarnsqs504p"]
+
+[ext_resource type="Script" uid="uid://bdy4s657qe0ox" path="res://Data/bee_genome.gd" id="1_hsel7"]
+
+[resource]
+script = ExtResource("1_hsel7")
+metadata/_custom_type_script = "uid://bdy4s657qe0ox"

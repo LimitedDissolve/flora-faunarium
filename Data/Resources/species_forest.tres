@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="BeeSpecies" format=3 uid="uid://dc1seog060k4b"]
+
+[ext_resource type="Script" uid="uid://bdy4s657qe0ox" path="res://Data/bee_genome.gd" id="1_0ujtc"]
+
+[resource]
+script = ExtResource("1_0ujtc")
+base_lifespan = 5.0
+metadata/_custom_type_script = "uid://bdy4s657qe0ox"

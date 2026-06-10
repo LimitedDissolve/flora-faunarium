@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MutationRecipe" format=3 uid="uid://c6jie31unfwcr"]
+
+[ext_resource type="Resource" uid="uid://s13louw43rci" path="res://Data/Resources/species_golden.tres" id="1_4hiql"]
+[ext_resource type="Script" uid="uid://cynn4afedwfxj" path="res://Data/mutation_recipe.gd" id="1_7aatj"]
+
+[resource]
+script = ExtResource("1_7aatj")
+parent1_id = "forest"
+parent2_id = "meadow"
+result_species = ExtResource("1_4hiql")
+chance = 1.0
+metadata/_custom_type_script = "uid://cynn4afedwfxj"

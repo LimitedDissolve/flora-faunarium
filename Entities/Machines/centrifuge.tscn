@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cl3xl2xr2c61e"]
+
+[ext_resource type="Script" uid="uid://c21mruvu4y13g" path="res://Entities/Machines/centrifuge.gd" id="1_centr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_centr"]
+albedo_color = Color(0.8, 0.5, 0.2, 1)
+metallic = 0.5
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_centr"]
+top_radius = 0.3
+bottom_radius = 0.4
+height = 0.8
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_centr"]
+height = 0.8
+radius = 0.4
+
+[node name="Centrifuge" type="RigidBody3D" unique_id=1471484553 groups=["heavy_item", "interactable"]]
+script = ExtResource("1_centr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1348321709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+material_override = SubResource("StandardMaterial3D_centr")
+mesh = SubResource("CylinderMesh_centr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=826762369]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("CylinderShape3D_centr")

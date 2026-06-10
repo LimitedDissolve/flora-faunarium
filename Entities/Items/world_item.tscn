@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Entities/Items/world_item.gd" id="1_world"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_world"]
+albedo_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_world"]
+top_radius = 0.15
+bottom_radius = 0.15
+height = 0.3
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_world"]
+height = 0.3
+radius = 0.15
+
+[node name="WorldItem" type="RigidBody3D" groups=["interactable", "small_item"]]
+script = ExtResource("1_world")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_world")
+mesh = SubResource("CylinderMesh_world")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_world")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+pixel_size = 0.0025
+billboard = 1
+no_depth_test = true
+text = "Предмет"

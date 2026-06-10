@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://ctu533bb2phgk"]
+
+[ext_resource type="Script" uid="uid://fuh1bplk00sm" path="res://Environment/Pedestal/pedestal.gd" id="1_j0abg"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gt17g"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yjdd8"]
+albedo_color = Color(0.2556064, 0.43166968, 0.44477466, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1mflm"]
+
+[node name="Pedestal" type="StaticBody3D" unique_id=724398501 groups=["interactable"]]
+script = ExtResource("1_j0abg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=478836898]
+transform = Transform3D(1, 0, 0, 0, 0.25, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_gt17g")
+surface_material_override/0 = SubResource("StandardMaterial3D_yjdd8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=568928396]
+transform = Transform3D(1, 0, 0, 0, 0.25, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_1mflm")
+
+[node name="Slot" type="Marker3D" parent="." unique_id=219624628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1254558, 0)
