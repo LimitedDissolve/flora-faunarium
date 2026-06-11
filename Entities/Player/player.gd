@@ -1,12 +1,14 @@
 extends CharacterBody3D
 
 const SPEED = 5.0
-var is_ui_active: bool = false 
+const HEAVY_SPEED_MULTIPLIER = 0.65 # снижение скорости при подбирании тяжелого предмета
 
+var is_ui_active: bool = false 
 
 # --- СЛОТЫ РУК ---
 var held_small_item: Variant = null # Может быть BeeData или Dictionary (рамка, мед, соты)
 var held_heavy_item: Node3D = null  # Физический объект улья/механизма в руках
+var small_item_visual: Node3D = null # Визуальная модель предмета в руке
 
 # Ссылка на универсальный предмет для пола (полностью заменяет bee_jar)
 var world_item_scene = preload("res://Entities/Items/world_item.tscn")
@@ -14,7 +16,11 @@ var world_item_scene = preload("res://Entities/Items/world_item.tscn")
 var forest_species = load("res://Data/Resources/species_forest.tres")
 var meadow_species = load("res://Data/Resources/species_meadow.tres")
 
+@onready var left_hand = $Head/Camera3D/LeftHand
+@onready var right_hand = $Head/Camera3D/RightHand
+@onready var heavy_socket = $Head/Camera3D/HeavySocket
 @onready var hand_ui = $CanvasLayer/HandUI
+
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
 @onready var interact_ray = $Head/Camera3D/InteractRay
@@ -26,10 +32,8 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	interact_ray.target_position = Vector3(0, 0, -4)
 	
-	# Динамически создаем сокет для тяжелых предметов перед камерой
-	heavy_hand_socket = Node3D.new()
-	camera.add_child(heavy_hand_socket)
-	heavy_hand_socket.position = Vector3(0.4, -0.3, -0.8) 
+	# Привязываем переменную к узлу из сцены (который мы настроили по центру)
+	heavy_hand_socket = heavy_socket 
 	
 	update_hand_ui()
 	
@@ -60,23 +64,46 @@ func _input(event):
 			target.interact(self)
 
 func update_hand_ui():
+	if small_item_visual:
+		small_item_visual.queue_free()
+		small_item_visual = null
+
 	if held_heavy_item != null:
-		var item_name = "Тяжелый предмет"
-		if held_heavy_item.has_method("get_item_name"):
-			item_name = held_heavy_item.get_item_name()
-		hand_ui.text = "В руках: " + item_name
+		# Когда несем тяжелое, маленькие руки можно визуально скрыть 
+		# (если у вас есть меши рук)
+		left_hand.visible = false 
+		right_hand.visible = false
+		hand_ui.text = "Несу в обеих руках: " + held_heavy_item.get_item_name()
 		hand_ui.add_theme_color_override("font_color", Color.CYAN)
+		
 	elif held_small_item != null:
+		left_hand.visible = true
+		right_hand.visible = true
+		_create_small_item_visual()
+		
 		if held_small_item is BeeData:
-			var caste_str = "Принцесса" if held_small_item.caste == BeeData.Castes.PRINCESS else "Трутень"
-			hand_ui.text = "В руке: " + held_small_item.species.name + " (" + caste_str + ")"
-			hand_ui.add_theme_color_override("font_color", Color.YELLOW)
-		elif typeof(held_small_item) == TYPE_DICTIONARY:
-			hand_ui.text = "В руке: " + held_small_item.get("name", "Предмет")
-			hand_ui.add_theme_color_override("font_color", Color.ORANGE)
+			hand_ui.text = "В правой руке: " + held_small_item.species.name
+		else:
+			hand_ui.text = "В правой руке: " + held_small_item.get("name", "Предмет")
+		hand_ui.add_theme_color_override("font_color", Color.YELLOW)
 	else:
+		left_hand.visible = true
+		right_hand.visible = true
 		hand_ui.text = "Руки пусты"
 		hand_ui.add_theme_color_override("font_color", Color.WHITE)
+
+func _create_small_item_visual():
+	small_item_visual = world_item_scene.instantiate()
+	right_hand.add_child(small_item_visual)
+	
+	small_item_visual.freeze = true
+	small_item_visual.collision_layer = 0
+	small_item_visual.collision_mask = 0
+	small_item_visual.item_data = held_small_item
+	
+	# Смещение, чтобы предмет был ПЕРЕД рукой, а не внутри неё
+	small_item_visual.position = Vector3(0, 0, -0.1) 
+	small_item_visual.rotation = Vector3.ZERO
 
 func drop_small_item():
 	var dropped_node = world_item_scene.instantiate()
@@ -91,20 +118,28 @@ func drop_small_item():
 	update_hand_ui()
 
 func drop_heavy_item():
-	var item = held_heavy_item
-	held_heavy_item = null
-	
-	item.reparent(get_tree().current_scene)
-	var drop_pos = camera.global_position - camera.global_transform.basis.z * 1.5
-	item.global_position = drop_pos
-	
-	if item is RigidBody3D:
-		item.freeze = false
-		item.collision_layer = 1
-		item.collision_mask = 1
-		item.apply_impulse(-camera.global_transform.basis.z * 2.0)
+	if held_heavy_item:
+		var item = held_heavy_item
+		held_heavy_item = null
 		
-	update_hand_ui()
+		# Возвращаем предмет в корень сцены
+		item.reparent(get_tree().current_scene)
+		
+		# Позиция: чуть впереди и ниже головы, чтобы не застрять в игроке
+		var drop_pos = head.global_position - head.global_transform.basis.z * 1.5
+		item.global_position = drop_pos
+		
+		# ВАЖНО: Правильный сброс физики
+		if item is RigidBody3D:
+			item.freeze = false
+			item.sleeping = false # Просыпаемся, чтобы физика заработала
+			item.collision_layer = 1 # Слой, который видит RayCast
+			item.collision_mask = 1
+			# Небольшой импульс от игрока
+			var impulse = -head.global_transform.basis.z * 2.0
+			item.apply_central_impulse(impulse)
+		
+		update_hand_ui()
 
 func spawn_test_item(data_to_spawn: Variant):
 	var dropped_node = world_item_scene.instantiate()
@@ -134,20 +169,23 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 	if is_ui_active:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
 	else:
-		# Ходьба по WASD теперь будет работать ВСЕГДА, 
-		# даже если браузер временно не дает скрыть курсор!
+		# РАССЧИТЫВАЕМ ТЕКУЩУЮ СКОРОСТЬ
+		var current_speed = SPEED
+		if held_heavy_item != null:
+			current_speed *= HEAVY_SPEED_MULTIPLIER
+		
 		var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		
 		if direction:
-			velocity.x = direction.x * SPEED
-			velocity.z = direction.z * SPEED
+			velocity.x = direction.x * current_speed
+			velocity.z = direction.z * current_speed
 		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			velocity.z = move_toward(velocity.z, 0, SPEED)
+			velocity.x = move_toward(velocity.x, 0, current_speed)
+			velocity.z = move_toward(velocity.z, 0, current_speed)
 
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta

@@ -39,14 +39,14 @@ func remove_item(player):
 		var item = current_item
 		current_item = null
 		
-		item.reparent(player.heavy_hand_socket)
+		# Теперь крепим к центральному сокету для тяжелых предметов
+		item.reparent(player.heavy_socket) 
 		item.position = Vector3.ZERO
 		item.rotation = Vector3.ZERO
 		
-		if item is RigidBody3D:
-			item.freeze = true
-			item.collision_layer = 0
-			item.collision_mask = 0
+		item.freeze = true
+		item.collision_layer = 0
+		item.collision_mask = 0
 			
 		player.held_heavy_item = item
 		player.update_hand_ui()
