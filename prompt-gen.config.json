@@ -1,0 +1,8 @@
+{
+  "extensions": "tscn,gd",
+  "directory": "./",
+  "output": "src_prompt.md",
+  "format": "structured",
+  "excludePaths": "**/.godot/**,**/.vscode/**",
+  "maxSize": "100"
+}

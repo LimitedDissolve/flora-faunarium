@@ -56,6 +56,7 @@ func update_tooltip():
 
 func show_analyzer_ui(player):
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	player.is_ui_active = true	
 	
 	var panel = Panel.new()
 	panel.set_anchors_preset(Control.PRESET_CENTER)
@@ -96,4 +97,5 @@ func show_analyzer_ui(player):
 	btn.pressed.connect(func(): 
 		panel.queue_free()
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		player.is_ui_active = false
 	)

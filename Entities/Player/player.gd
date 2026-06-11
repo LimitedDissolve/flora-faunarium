@@ -1,6 +1,8 @@
 extends CharacterBody3D
 
 const SPEED = 5.0
+var is_ui_active: bool = false 
+
 
 # --- СЛОТЫ РУК ---
 var held_small_item: Variant = null # Может быть BeeData или Dictionary (рамка, мед, соты)
@@ -111,26 +113,32 @@ func spawn_test_item(data_to_spawn: Variant):
 	dropped_node.global_position = camera.global_position - camera.global_transform.basis.z * 2.0
 
 func _unhandled_input(event):
+	# 1. Сначала обрабатываем клик для захвата мыши, даже если она сейчас видима
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		get_viewport().set_input_as_handled() # Помечаем событие как обработанное
+
+	# 2. Если мышь всё еще видима, игнорируем вращение камеры
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 		return
 
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		if event is InputEventMouseMotion:
-			head.rotate_y(-event.relative.x * mouse_sensitivity)
-			camera.rotate_x(-event.relative.y * mouse_sensitivity)
-			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+	# 3. Вращение камеры (работает только при захваченной мыши)
+	if event is InputEventMouseMotion:
+		head.rotate_y(-event.relative.x * mouse_sensitivity)
+		camera.rotate_x(-event.relative.y * mouse_sensitivity)
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 	
+	# Освобождение мыши по кнопке Esc (ui_cancel)
 	if event.is_action_pressed("ui_cancel"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _physics_process(delta):
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+	if is_ui_active:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
 	else:
+		# Ходьба по WASD теперь будет работать ВСЕГДА, 
+		# даже если браузер временно не дает скрыть курсор!
 		var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		
