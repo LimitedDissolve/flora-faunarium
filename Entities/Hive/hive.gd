@@ -43,12 +43,15 @@ func interact(player):
 			player.held_small_item = null
 			player.update_hand_ui()
 			update_tooltip()
+			return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
+			
 		elif current_state == HiveState.WAITING_FOR_MATE and bee.caste == BeeData.Castes.DRONE:
 			stored_drone = bee
 			player.held_small_item = null
 			player.update_hand_ui()
 			start_queen_cycle()
-		return
+			return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
+		return # Если пчела не подошла, просто выходим
 		
 	# 2. Если в руках рамка
 	if typeof(player.held_small_item) == TYPE_DICTIONARY and player.held_small_item.get("type") == "frame":
@@ -57,12 +60,11 @@ func interact(player):
 			player.held_small_item = null
 			player.update_hand_ui()
 			update_tooltip()
-		else:
-			print("Улей уже полон рамок!")
-		return
+		return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
 
-	# 3. Клик пустой рукой (сбор сот, сбор пчел или подъем улья)
+	# 3. Клик пустой рукой (сбор ресурсов или подъем улья)
 	if player.held_small_item == null and player.held_heavy_item == null:
+		# Сначала проверяем, можно ли что-то забрать из улья
 		if stored_combs.size() > 0:
 			var comb_species = stored_combs.pop_back()
 			player.held_small_item = {
@@ -72,24 +74,25 @@ func interact(player):
 			}
 			player.update_hand_ui()
 			update_tooltip()
-			return
+			return # Забрали соту - выходим
 			
 		if current_state == HiveState.DEAD:
 			spawn_loot()
 			reset_hive()
-			return
+			return # Забрали лут - выходим
 			
+		# ТОЛЬКО ЕСЛИ НИЧЕГО НЕ ЗАБРАЛИ И УЛЕЙ НЕ ЗАНЯТ - поднимаем его
 		if not is_busy() and stored_combs.is_empty():
 			var parent = get_parent()
-			if parent.is_in_group("pedestal"):
+			if parent.has_method("remove_item"):
 				parent.remove_item(player)
 			else:
-				# Поднятие улья с пола в сокет рук игрока
+				# Поднятие улья с пола
 				reparent(player.heavy_hand_socket)
 				position = Vector3.ZERO
 				rotation = Vector3.ZERO
-				freeze = true
-				# Отключаем коллизию в руках
+				# Используем set_deferred для физики, чтобы избежать багов
+				set_deferred("freeze", true)
 				collision_layer = 0
 				collision_mask = 0
 				player.held_heavy_item = self
