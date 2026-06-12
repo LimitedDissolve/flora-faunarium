@@ -1,9 +1,10 @@
 extends RigidBody3D
+class_name Hive
 
-@onready var timer = $TickTimer
-@onready var tooltip = $StatusTooltip
+@export var world_item_scene: PackedScene # Подключаем сцену через инспектор!
 
-var world_item_scene = preload("res://Entities/Items/world_item.tscn")
+@onready var timer: Timer = $TickTimer
+@onready var tooltip: Label3D = $StatusTooltip
 
 enum HiveState { EMPTY, WAITING_FOR_MATE, WORKING, DEAD }
 var current_state: HiveState = HiveState.EMPTY
@@ -15,14 +16,13 @@ var active_queen: BeeData = null
 var output_princess: BeeData = null
 var output_drones: Array[BeeData] = []
 
-# Переменные рамок и сот
 var frames_count: int = 0
 const MAX_FRAMES: int = 3
 var stored_combs: Array[BeeSpecies] = []
 var comb_progress: float = 0.0
 const COMB_THRESHOLD: float = 10.0
 
-func _ready():
+func _ready() -> void:
 	timer.timeout.connect(_on_timer_timeout)
 	timer.stop()
 	update_tooltip()
@@ -33,71 +33,61 @@ func is_busy() -> bool:
 func get_item_name() -> String:
 	return "Улей"
 
-func interact(player):
+func interact(player: Player) -> void:
+	var held_item = player.held_small_item
+	
 	# 1. Если в руках пчела
-	if player.held_small_item is BeeData:
-		var bee = player.held_small_item
-		if current_state == HiveState.EMPTY and bee.caste == BeeData.Castes.PRINCESS:
-			stored_princess = bee
+	if held_item is BeeData:
+		if current_state == HiveState.EMPTY and held_item.caste == BeeData.Castes.PRINCESS:
+			stored_princess = held_item
 			current_state = HiveState.WAITING_FOR_MATE
 			player.held_small_item = null
 			player.update_hand_ui()
 			update_tooltip()
-			return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
-			
-		elif current_state == HiveState.WAITING_FOR_MATE and bee.caste == BeeData.Castes.DRONE:
-			stored_drone = bee
+		elif current_state == HiveState.WAITING_FOR_MATE and held_item.caste == BeeData.Castes.DRONE:
+			stored_drone = held_item
 			player.held_small_item = null
 			player.update_hand_ui()
 			start_queen_cycle()
-			return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
-		return # Если пчела не подошла, просто выходим
+		return
 		
 	# 2. Если в руках рамка
-	if typeof(player.held_small_item) == TYPE_DICTIONARY and player.held_small_item.get("type") == "frame":
+	if held_item is ItemData and held_item.type == ItemData.ItemType.FRAME:
 		if frames_count < MAX_FRAMES:
 			frames_count += 1
 			player.held_small_item = null
 			player.update_hand_ui()
 			update_tooltip()
-		return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
+		return
 
-# 3. Клик пустой рукой (сбор ресурсов или подъем улья)
-	if player.held_small_item == null and player.held_heavy_item == null:
-		# Сначала проверяем, можно ли что-то забрать из улья
+	# 3. Клик пустой рукой (сбор ресурсов или подъем)
+	if held_item == null and player.held_heavy_item == null:
 		if stored_combs.size() > 0:
 			var comb_species = stored_combs.pop_back()
-			player.held_small_item = {
-				"type": "comb", 
-				"species": comb_species, 
-				"name": "Сота (" + comb_species.name + ")"
-			}
+			player.held_small_item = ItemData.create(ItemData.ItemType.COMB, "Сота (" + comb_species.name + ")", comb_species)
 			player.update_hand_ui()
 			update_tooltip()
-			return # Забрали соту - выходим
+			return
 			
 		if current_state == HiveState.DEAD:
 			spawn_loot()
 			reset_hive()
-			return # Забрали лут - выходим
+			return
 			
-		# Если улей ждет трутня, можно забрать принцессу обратно в руки
 		if current_state == HiveState.WAITING_FOR_MATE:
 			player.held_small_item = stored_princess
 			stored_princess = null
-			current_state = HiveState.EMPTY # Возвращаем улей в пустое состояние
+			current_state = HiveState.EMPTY
 			player.update_hand_ui()
 			update_tooltip()
-			return # Забрали принцессу - выходим
+			return
 			
-		# если ничего не забрали и улей не занят - поднимаем его
 		if not is_busy() and stored_combs.is_empty():
 			var parent = get_parent()
 			if parent.has_method("remove_item"):
 				parent.remove_item(player)
 			else:
-				# Поднятие улья с пола
-				reparent(player.heavy_hand_socket)
+				reparent(player.heavy_socket)
 				position = Vector3.ZERO
 				rotation = Vector3.ZERO
 				set_deferred("freeze", true)

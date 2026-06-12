@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BeeSpecies" format=3 uid="uid://s13louw43rci"]
 
-[ext_resource type="Script" uid="uid://bdy4s657qe0ox" path="res://Data/bee_genome.gd" id="1_ghbm0"]
+[ext_resource type="Script" uid="uid://bdy4s657qe0ox" path="res://data/bee_genome.gd" id="1_ghbm0"]
 
 [resource]
 script = ExtResource("1_ghbm0")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ctu533bb2phgk"]
 
-[ext_resource type="Script" uid="uid://fuh1bplk00sm" path="res://Environment/Pedestal/pedestal.gd" id="1_j0abg"]
+[ext_resource type="Script" uid="uid://fuh1bplk00sm" path="res://environment/Pedestal/pedestal.gd" id="1_j0abg"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gt17g"]
 

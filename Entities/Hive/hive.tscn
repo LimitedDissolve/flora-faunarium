@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://oaq11pjuhjmy"]
 
-[ext_resource type="Script" uid="uid://btmdwbwrmfa80" path="res://Entities/Hive/hive.gd" id="1_5np2q"]
+[ext_resource type="Script" uid="uid://btmdwbwrmfa80" path="res://entities/Hive/hive.gd" id="1_5np2q"]
+[ext_resource type="PackedScene" uid="uid://otr0nh3f7v10" path="res://entities/Items/world_item.tscn" id="2_p37um"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_o2j8r"]
 
@@ -10,8 +11,9 @@ radius = 4.0
 [sub_resource type="BoxShape3D" id="BoxShape3D_5np2q"]
 size = Vector3(0.5, 0.1, 0.5)
 
-[node name="Hive" type="RigidBody3D" unique_id=838853479 groups=["interactable", "heavy_item"]]
+[node name="Hive" type="RigidBody3D" unique_id=838853479 groups=["heavy_item", "interactable"]]
 script = ExtResource("1_5np2q")
+world_item_scene = ExtResource("2_p37um")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=74397542]
 transform = Transform3D(0.5, 0, 0, 0, 0.1, 0, 0, 0, 0.5, 0, 0.05, 0)

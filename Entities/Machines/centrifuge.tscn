@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cl3xl2xr2c61e"]
 
-[ext_resource type="Script" uid="uid://c21mruvu4y13g" path="res://Entities/Machines/centrifuge.gd" id="1_centr"]
+[ext_resource type="Script" uid="uid://c21mruvu4y13g" path="res://entities/Machines/centrifuge.gd" id="1_centr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_centr"]
 albedo_color = Color(0.8, 0.5, 0.2, 1)
