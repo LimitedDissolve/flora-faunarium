@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://otr0nh3f7v10"]
 
-[ext_resource type="Script" path="res://Entities/Items/world_item.gd" id="1_world"]
+[ext_resource type="Script" uid="uid://7p1in7ufnyki" path="res://entities/Items/world_item.gd" id="1_world"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_world"]
 albedo_color = Color(0.8, 0.8, 0.8, 1)
@@ -14,17 +14,17 @@ height = 0.3
 height = 0.3
 radius = 0.15
 
-[node name="WorldItem" type="RigidBody3D" groups=["interactable", "small_item"]]
+[node name="WorldItem" type="RigidBody3D" unique_id=1840297988 groups=["interactable", "small_item"]]
 script = ExtResource("1_world")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1991370801]
 material_override = SubResource("StandardMaterial3D_world")
 mesh = SubResource("CylinderMesh_world")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=263883656]
 shape = SubResource("CylinderShape3D_world")
 
-[node name="Label3D" type="Label3D" parent="."]
+[node name="Label3D" type="Label3D" parent="." unique_id=1018992236]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 pixel_size = 0.0025
 billboard = 1

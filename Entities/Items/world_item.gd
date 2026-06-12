@@ -1,50 +1,44 @@
 extends RigidBody3D
+class_name WorldItem
 
-@export var item_data: Variant = null
+@export var item_data: Resource = null
 
-@onready var mesh = $MeshInstance3D
-@onready var label = $Label3D
+@onready var mesh: MeshInstance3D = $MeshInstance3D
+@onready var label: Label3D = $Label3D
 
-func _ready():
+func _ready() -> void:
 	add_to_group("interactable")
 	add_to_group("small_item")
 	_update_visuals()
 
-func interact(player):
+func interact(player: Player) -> void:
 	if player.held_small_item == null and player.held_heavy_item == null:
 		player.held_small_item = item_data
 		player.update_hand_ui()
 		queue_free() 
-	else:
-		print("Руки заняты!")
 
-func _update_visuals():
-	if item_data == null:
-		return
+func _update_visuals() -> void:
+	if not item_data: return
 		
 	var material = StandardMaterial3D.new()
 	mesh.material_override = material
 	
-	# 1. Если это Пчела (BeeData)
 	if item_data is BeeData:
 		var caste_str = "Принцесса" if item_data.caste == BeeData.Castes.PRINCESS else "Трутень"
-		label.text = item_data.species.name + "\n(" + caste_str + ")"
+		label.text = "%s\n(%s)" % [item_data.species.name, caste_str]
 		label.modulate = Color.YELLOW
 		material.albedo_color = Color("e0a96d")
 		
-	# 2. Если это Dictionary (рамка, мед, соты)
-	elif typeof(item_data) == TYPE_DICTIONARY:
-		var type = item_data.get("type", "")
-		label.text = item_data.get("name", "Предмет")
-		
-		match type:
-			"frame":
+	elif item_data is ItemData:
+		label.text = item_data.name
+		match item_data.type:
+			ItemData.ItemType.FRAME:
 				material.albedo_color = Color("8d5b4c")
 				label.modulate = Color.BROWN
-			"comb":
+			ItemData.ItemType.COMB:
 				material.albedo_color = Color("ffb703")
 				label.modulate = Color.GOLD
-			"honey":
+			ItemData.ItemType.HONEY:
 				material.albedo_color = Color("fb8500")
 				label.modulate = Color.ORANGE
 			_:

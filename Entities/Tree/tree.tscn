@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c0q8lr5llluly"]
 
-[ext_resource type="Script" uid="uid://cmtesbr7h40a1" path="res://Entities/Tree/tree.gd" id="1_7b80l"]
+[ext_resource type="Script" uid="uid://cmtesbr7h40a1" path="res://entities/Tree/tree.gd" id="1_7b80l"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_tei20"]
 

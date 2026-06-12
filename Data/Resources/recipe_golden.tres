@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="MutationRecipe" format=3 uid="uid://c6jie31unfwcr"]
 
-[ext_resource type="Resource" uid="uid://s13louw43rci" path="res://Data/Resources/species_golden.tres" id="1_4hiql"]
-[ext_resource type="Script" uid="uid://cynn4afedwfxj" path="res://Data/mutation_recipe.gd" id="1_7aatj"]
+[ext_resource type="Resource" uid="uid://s13louw43rci" path="res://data/Resources/species_golden.tres" id="1_4hiql"]
+[ext_resource type="Script" uid="uid://cynn4afedwfxj" path="res://data/mutation_recipe.gd" id="1_7aatj"]
 
 [resource]
 script = ExtResource("1_7aatj")

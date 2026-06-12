@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://1b1swcwbwepy"]
+
+[sub_resource type="GDScript" id="GDScript_6adnx"]
+script/source = "extends Node2D
+
+func _ready():
+	print(\"Test scene loaded. GameConsole should be available.\")
+	print(\"Press F12 or Ctrl+` to open the debug console\")
+	print(\"Try commands like: fps, nodes, pause, timescale 2.0\")
+	print(\"Or run: test to execute comprehensive test suite\")
+
+func _input(event):
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_F1:
+			print(\"F1 pressed - this should not interfere with console\")
+		elif event.keycode == KEY_F2:
+			print(\"F2 pressed - this should not interfere with console\")
+		elif event.keycode == KEY_T and event.ctrl_pressed:
+			_run_comprehensive_tests()
+
+func _run_comprehensive_tests():
+	print(\"\\n =========================\")
+	print(\"RUNNING COMPREHENSIVE DEBUG CONSOLE TEST SUITE\")
+	print(\"=========================\")
+	
+	var test_framework = TestFramework.new()
+	test_framework.run_all_tests()
+	
+	print(\"\\n =========================\")
+	print(\"TEST SUITE COMPLETED\")
+	print(\"=========================\")
+	
+	# Cleanup
+	test_framework.queue_free()
+"
+
+[node name="TestScene" type="Node2D" unique_id=796114009]
+script = SubResource("GDScript_6adnx")
+
+[node name="Label" type="Label" parent="." unique_id=1367472577]
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 500.0
+offset_bottom = 200.0
+text = "GameConsole Test Scene
+Press F12 or Ctrl+` to open the debug console
+Press F12 or Esc to close it"
+horizontal_alignment = 1
+vertical_alignment = 1
