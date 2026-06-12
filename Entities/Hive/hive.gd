@@ -62,7 +62,7 @@ func interact(player):
 			update_tooltip()
 		return # ОБЯЗАТЕЛЬНО ВЫХОДИМ
 
-	# 3. Клик пустой рукой (сбор ресурсов или подъем улья)
+# 3. Клик пустой рукой (сбор ресурсов или подъем улья)
 	if player.held_small_item == null and player.held_heavy_item == null:
 		# Сначала проверяем, можно ли что-то забрать из улья
 		if stored_combs.size() > 0:
@@ -81,7 +81,16 @@ func interact(player):
 			reset_hive()
 			return # Забрали лут - выходим
 			
-		# ТОЛЬКО ЕСЛИ НИЧЕГО НЕ ЗАБРАЛИ И УЛЕЙ НЕ ЗАНЯТ - поднимаем его
+		# Если улей ждет трутня, можно забрать принцессу обратно в руки
+		if current_state == HiveState.WAITING_FOR_MATE:
+			player.held_small_item = stored_princess
+			stored_princess = null
+			current_state = HiveState.EMPTY # Возвращаем улей в пустое состояние
+			player.update_hand_ui()
+			update_tooltip()
+			return # Забрали принцессу - выходим
+			
+		# если ничего не забрали и улей не занят - поднимаем его
 		if not is_busy() and stored_combs.is_empty():
 			var parent = get_parent()
 			if parent.has_method("remove_item"):
@@ -91,7 +100,6 @@ func interact(player):
 				reparent(player.heavy_hand_socket)
 				position = Vector3.ZERO
 				rotation = Vector3.ZERO
-				# Используем set_deferred для физики, чтобы избежать багов
 				set_deferred("freeze", true)
 				collision_layer = 0
 				collision_mask = 0
